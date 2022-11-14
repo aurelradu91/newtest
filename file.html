@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+
+
+</head>
+
+<body>
+
+
+
+    <script>
+
+        const actx = new AudioContext()
+
+
+        async function getFile(){
+            const response = await fetch("./audio/jump2.mp3");
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await actx.decodeAudioData(arrayBuffer)
+            return audioBuffer;
+        }
+
+
+        function playSample(audioBuffer) {
+            const sampleSource = actx.createBufferSource();
+            sampleSource.buffer = audioBuffer;
+            sampleSource.connect(actx.destination);
+            sampleSource.start();
+            return sampleSource;
+        }
+
+        document.addEventListener("click", () => {getFile().then((response) => {playSample(response)})})
+
+    </script>
+    
+
+
+
+
+
+</body>
+
+</html>

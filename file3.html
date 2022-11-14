@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button class="setup-samples">setup samples</button>
+    <button class="play-sample">play sample</button>
+
+
+    <script>
+        let actx;
+        actx = new AudioContext()
+        let samples;
+
+        const setupSamplesBtn = document.querySelector(".setup-samples")
+        const playSampleBtn = document.querySelector(".play-sample")
+
+        const samplePaths = ["./audio/jump2.mp3", "./audio/jump.wav"]
+
+        //CREATE LISTENERS FOR BUTTONS;
+
+
+        setupSamplesBtn.addEventListener("click", () =>{
+            setupSamples(samplePaths).then((response) => {
+                samples = response;
+                playSampleBtn.addEventListener("click", () => { 
+                playSample(samples[1], 0);
+                })
+            } )
+        })
+
+        //CREATE FUNCTIONS FOR LISTENERS;
+
+        async function getFile(filePath){
+            const response = await fetch(filePath);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await actx.decodeAudioData(arrayBuffer)
+            return audioBuffer;
+        }
+
+        async function setupSamples(array) {
+            const audioBuffers = [];
+
+            for (const element of array) {
+                const sample = await getFile(element);
+                console.log(sample)
+                audioBuffers.push(sample);
+            }
+            return audioBuffers;
+
+        }
+
+        function playSample(audioBuffer, time) {
+            const sampleSource = audioContext.createBufferSource();
+            sampleSource.buffer = audioBuffer;
+            sampleSource.connect(audioContext.destination);
+            sampleSource.start(time)
+            return sampleSource;
+        }
+
+        function playSample(audioBuffer, time) {
+            const sampleSource = actx.createBufferSource();
+            sampleSource.buffer = audioBuffer;
+            sampleSource.connect(actx.destination)
+            sampleSource.start(time)
+        }
+    </script>
+</body>
+</html>
